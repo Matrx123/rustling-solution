@@ -11,11 +11,9 @@
 // Execute `rustlings hint iterators5` or use the `hint` watch subcommand for a
 // hint.
 
-// I AM NOT DONE
-
 use std::collections::HashMap;
 
-#[derive(Clone, Copy, PartialEq, Eq)]
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
 enum Progress {
     None,
     Some,
@@ -35,7 +33,11 @@ fn count_for(map: &HashMap<String, Progress>, value: Progress) -> usize {
 fn count_iterator(map: &HashMap<String, Progress>, value: Progress) -> usize {
     // map is a hashmap with String keys and Progress values.
     // map = { "variables1": Complete, "from_str": None, ... }
-    todo!();
+    let result: HashMap<&String, &Progress> = map
+        .iter()
+        .filter(|&(k, v)| *v == value)
+        .collect();
+    result.len()
 }
 
 fn count_collection_for(collection: &[HashMap<String, Progress>], value: Progress) -> usize {
@@ -54,7 +56,15 @@ fn count_collection_iterator(collection: &[HashMap<String, Progress>], value: Pr
     // collection is a slice of hashmaps.
     // collection = [{ "variables1": Complete, "from_str": None, ... },
     //     { "variables2": Complete, ... }, ... ]
-    todo!();
+    collection
+        .iter()
+        .map(|item|
+            item
+                .values()
+                .filter(|&v| *v == value)
+                .count()
+        )
+        .sum()
 }
 
 #[cfg(test)]
@@ -84,20 +94,14 @@ mod tests {
         let map = get_map();
         let progress_states = vec![Progress::Complete, Progress::Some, Progress::None];
         for progress_state in progress_states {
-            assert_eq!(
-                count_for(&map, progress_state),
-                count_iterator(&map, progress_state)
-            );
+            assert_eq!(count_for(&map, progress_state), count_iterator(&map, progress_state));
         }
     }
 
     #[test]
     fn count_collection_complete() {
         let collection = get_vec_map();
-        assert_eq!(
-            6,
-            count_collection_iterator(&collection, Progress::Complete)
-        );
+        assert_eq!(6, count_collection_iterator(&collection, Progress::Complete));
     }
 
     #[test]
